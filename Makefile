@@ -5,6 +5,11 @@
 #################################################################################
 
 PROJECT_NAME = tj_kaggle_ga
+ifeq ($(OS),Windows_NT) 
+    detected_OS := Windows
+else
+    detected_OS := $(shell sh -c 'uname 2>/dev/null || echo Unknown')
+endif
 
 
 #################################################################################
@@ -24,15 +29,24 @@ update_environment:
 export_environment:
 	conda env export --name $(PROJECT_NAME) | grep -v "^prefix: " > environment.yml
 
+## Fetch dataset
+fetch_data:
+	kaggle competitions download -p data/raw ga-customer-revenue-prediction
+	python -m zipfile -e data/raw/sample_submission.csv.zip data/raw/
+	python -m zipfile -e data/raw/test.csv.zip data/raw/
+	python -m zipfile -e data/raw/train.csv.zip data/raw/
+	rm data/raw/sample_submission.csv.zip
+	rm data/raw/test.csv.zip
+	rm data/raw/train.csv.zip
+
 ## Make Dataset
-data:
+make_data:
 	src/data/make_dataset.py
 
 ## Delete all compiled Python files
 clean:
 	find . -type f -name "*.py[co]" -delete
 	find . -type d -name "__pycache__" -delete
-
 
 
 #################################################################################
