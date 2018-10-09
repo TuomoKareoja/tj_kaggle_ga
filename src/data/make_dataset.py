@@ -1,24 +1,33 @@
 """
 .. module:: make_dataset.py
     :synopsis:
-
 """
 
 import click
 import logging
 from pathlib import Path
 from dotenv import find_dotenv, load_dotenv
+import os
+from src.data.data_processing import read_csv_and_flatten_json
 
 
 @click.command()
-@click.argument("input_filepath", type=click.Path(exists=True))
-@click.argument("output_filepath", type=click.Path())
-def main(input_filepath, output_filepath):
+def main():
     """ Runs data processing scripts to turn raw data from (../raw) into
         cleaned data ready to be analyzed (saved in ../processed).
     """
+    raw_path = os.path.abspath(os.getcwd() + "/data/raw/")
+    interim_path = os.path.abspath(os.getcwd() + "/data/interim/")
+    processed_path = os.path.abspath(os.getcwd() + "/data/processed/")
+
     logger = logging.getLogger(__name__)
     logger.info("making final data set from raw data")
+    for file in ["train.csv", "test.csv"]:
+        print("reading " + file + " from " + raw_path)
+        df = read_csv_and_flatten_json(os.path.join(raw_path, file))
+        df.name = file[:-4] + "_flattened.pkl"
+        print("saving " + df.name + " to " + interim_path)
+        df.to_csv(os.path.join(interim_path, df.name))
 
 
 if __name__ == "__main__":
@@ -33,3 +42,4 @@ if __name__ == "__main__":
     load_dotenv(find_dotenv())
 
     main()
+

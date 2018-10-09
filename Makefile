@@ -5,11 +5,6 @@
 #################################################################################
 
 PROJECT_NAME = tj_kaggle_ga
-ifeq ($(OS),Windows_NT) 
-    detected_OS := Windows
-else
-    detected_OS := $(shell sh -c 'uname 2>/dev/null || echo Unknown')
-endif
 
 
 #################################################################################
@@ -41,7 +36,7 @@ fetch_data:
 
 ## Make Dataset
 make_data:
-	src/data/make_dataset.py
+	python src/data/make_dataset.py
 
 ## Delete all compiled Python files
 clean:
