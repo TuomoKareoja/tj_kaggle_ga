@@ -63,6 +63,9 @@ target/
 *.db
 *.rdb
 
+# Kaggle config
+%KAGGLE_CONFIG_DIR%/
+
 # Pycharm
 .idea
 
